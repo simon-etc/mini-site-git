@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- SEO -->
-  <title>Mini site Git – Apprendre Git et GitHub</title>
-  <meta name="description" content="Découvrez Git et GitHub : versionnage, commandes essentielles et bonnes pratiques pour gérer vos projets de développement.">
-  <meta name="keywords" content="git, github, versionnage, développement, commandes git, tutoriel">
-  <meta name="author" content="Mini site Git">
+  <title>LoL Universe – Lore, Champions, Runes & Patch Notes</title>
+  <meta name="description" content="Explorez l'univers de League of Legends : lore des régions, stats des champions mises à jour automatiquement, runes recommandées et notes de patch.">
+  <meta name="keywords" content="league of legends, lol, lore, champions, runes, patch notes, buffs, nerfs, guide">
+  <meta name="author" content="LoL Universe Fan Site">
   <link rel="canonical" href="https://simon-etc.github.io/mini-site-git/">
 
-  <!-- Open Graph (aperçu Google / réseaux sociaux) -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Mini site Git – Apprendre Git et GitHub">
-  <meta property="og:description" content="Découvrez Git et GitHub : versionnage, commandes essentielles et bonnes pratiques.">
+  <meta property="og:title" content="LoL Universe – Lore, Champions, Runes & Patch Notes">
+  <meta property="og:description" content="Explorez l'univers de League of Legends avec données en temps réel.">
   <meta property="og:url" content="https://simon-etc.github.io/mini-site-git/">
   <meta property="og:locale" content="fr_FR">
 
@@ -23,67 +23,113 @@
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://ddragon.leagueoflegends.com https://cdn.merakianalytics.com; img-src 'self' data: https://ddragon.leagueoflegends.com; style-src 'self'; script-src 'self'; font-src 'self';">
 
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <header>
-    <div class="header-content">
-      <div class="logo">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6ZM12 18C10.5 18 9.17 17.22 8.38 16H15.62C14.83 17.22 13.5 18 12 18ZM7.5 14C7.22 14 7 13.78 7 13.5C7 13.22 7.22 13 7.5 13H16.5C16.78 13 17 13.22 17 13.5C17 13.78 16.78 14 16.5 14H7.5Z" fill="white"/>
-        </svg>
-      </div>
-      <h1>Mini site Git</h1>
-      <p class="subtitle">Découvrez la puissance du versionnage avec Git &amp; GitHub</p>
-      <a href="#presentation" class="btn-hero">Explorer &darr;</a>
+  <!-- Loader global -->
+  <div id="global-loader" class="global-loader">
+    <div class="loader-inner">
+      <div class="loader-hex"></div>
+      <span>Invocation en cours…</span>
     </div>
-    <div class="header-wave">
-      <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#f0f4f8"/>
-      </svg>
+  </div>
+  <div id="global-error" class="global-error" style="display:none"></div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-bg"></div>
+    <div class="header-content">
+      <div class="header-logo">
+        <span class="logo-gem">◆</span>
+        <div>
+          <h1>LoL Universe</h1>
+          <p class="header-sub">Lore · Champions · Runes · Patch Notes</p>
+        </div>
+      </div>
+      <div class="header-patch">
+        <span class="patch-badge">🔄 <span id="patch-version">Chargement…</span></span>
+      </div>
     </div>
   </header>
 
+  <!-- Navigation par onglets -->
+  <nav class="tab-nav" role="navigation" aria-label="Navigation principale">
+    <button class="tab-btn active" data-tab="lore"      aria-label="Lore">🌍 Univers</button>
+    <button class="tab-btn"        data-tab="champions" aria-label="Champions">⚔️ Champions</button>
+    <button class="tab-btn"        data-tab="runes"     aria-label="Runes">💎 Runes</button>
+    <button class="tab-btn"        data-tab="patch"     aria-label="Patch Notes">📋 Patch Notes</button>
+  </nav>
+
   <main>
-    <section id="presentation" class="card fade-in">
-      <div class="card-icon">&#128196;</div>
-      <h2>Présentation</h2>
-      <p>Ce mini site est utilisé pour découvrir le fonctionnement de <strong>Git</strong> et <strong>GitHub</strong>. Un outil indispensable pour tout développeur souhaitant gérer ses projets avec efficacité.</p>
+
+    <!-- ── Onglet LORE ── -->
+    <section id="tab-lore" class="tab-pane active">
+      <div class="lore-hero">
+        <h2>L'Univers de Runeterra</h2>
+        <p>Un monde déchiré par la magie, la guerre et des forces ancestrales. Chaque région forge des légendes qui façonnent le destin de Runeterra.</p>
+      </div>
+      <div id="lore-regions" class="regions-grid"></div>
     </section>
 
-    <section class="card fade-in">
-      <div class="card-icon">&#128640;</div>
-      <h2>Pourquoi Git ?</h2>
-      <ul>
-        <li>&#10003; Suivi de l'historique des modifications</li>
-        <li>&#10003; Collaboration en équipe facilitée</li>
-        <li>&#10003; Retour en arrière possible à tout moment</li>
-        <li>&#10003; Branches pour développer en parallèle</li>
-      </ul>
+    <!-- ── Onglet CHAMPIONS ── -->
+    <section id="tab-champions" class="tab-pane">
+      <div class="champions-controls">
+        <input id="champ-search" type="search" placeholder="Rechercher un champion…" autocomplete="off">
+        <div class="role-filters" role="group" aria-label="Filtrer par rôle">
+          <button class="role-btn active" data-role="Tous">Tous</button>
+          <button class="role-btn" data-role="Fighter">Guerrier</button>
+          <button class="role-btn" data-role="Mage">Mage</button>
+          <button class="role-btn" data-role="Assassin">Assassin</button>
+          <button class="role-btn" data-role="Tank">Tank</button>
+          <button class="role-btn" data-role="Marksman">Tireur</button>
+          <button class="role-btn" data-role="Support">Support</button>
+        </div>
+      </div>
+      <div id="champions-grid" class="champions-grid"></div>
     </section>
 
-    <section class="card fade-in">
-      <div class="card-icon">&#128736;</div>
-      <h2>Commandes essentielles</h2>
-      <div class="commands">
-        <div class="command"><code>git init</code><span>Initialiser un dépôt</span></div>
-        <div class="command"><code>git add .</code><span>Préparer les fichiers</span></div>
-        <div class="command"><code>git commit -m "msg"</code><span>Enregistrer les changements</span></div>
-        <div class="command"><code>git push</code><span>Envoyer sur GitHub</span></div>
+    <!-- ── Onglet RUNES ── -->
+    <section id="tab-runes" class="tab-pane">
+      <div id="runes-panel">
+        <div class="runes-hero">
+          <h2>Recommandations de Runes</h2>
+          <p>Sélectionnez un champion pour obtenir les meilleures pages de runes selon la situation.</p>
+          <div class="rune-champ-search-wrap">
+            <input id="rune-champ-input" type="search" placeholder="Chercher un champion…" autocomplete="off">
+            <ul id="rune-champ-results" class="rune-champ-results"></ul>
+          </div>
+        </div>
+        <div id="selected-rune-recs" class="selected-rune-recs"></div>
+        <div class="runes-section-title">
+          <h3>Toutes les voies de runes (Patch actuel)</h3>
+        </div>
+        <div id="rune-trees" class="rune-trees"></div>
       </div>
     </section>
+
+    <!-- ── Onglet PATCH ── -->
+    <section id="tab-patch" class="tab-pane">
+      <div id="patch-main"></div>
+    </section>
+
   </main>
 
+  <!-- Modal Champion -->
+  <div id="champ-modal" class="champ-modal" role="dialog" aria-modal="true" aria-label="Détails du champion">
+    <div class="champ-modal-inner">
+      <button id="modal-close" class="modal-close" aria-label="Fermer">✕</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
   <footer>
-    <p>Versionné avec &#10084; et <strong>Git</strong> &mdash; <span id="year"></span></p>
+    <p>Données via <a href="https://developer.riotgames.com/" target="_blank" rel="noopener noreferrer">Riot Data Dragon</a> — mises à jour automatiquement à chaque patch &mdash; <span id="footer-year"></span></p>
+    <p class="footer-disclaimer">Ce site n'est pas affilié à Riot Games.</p>
   </footer>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
-
+  <script src="app.js"></script>
 </body>
 </html>
