@@ -1,17 +1,68 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
- <meta charset="UTF-8">
- <title>Mini site Git</title>
- <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini site Git</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
- <h1>Mini site Git</h1>
- <p>Ce site est versionné avec Git.</p>
- <section>
- <h2>Présentation</h2>
- <p>Ce mini site est utilisé pour découvrir le fonctionnement de Git et GitHub.</p>
- </section>
+
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6ZM12 18C10.5 18 9.17 17.22 8.38 16H15.62C14.83 17.22 13.5 18 12 18ZM7.5 14C7.22 14 7 13.78 7 13.5C7 13.22 7.22 13 7.5 13H16.5C16.78 13 17 13.22 17 13.5C17 13.78 16.78 14 16.5 14H7.5Z" fill="white"/>
+        </svg>
+      </div>
+      <h1>Mini site Git</h1>
+      <p class="subtitle">Découvrez la puissance du versionnage avec Git &amp; GitHub</p>
+      <a href="#presentation" class="btn-hero">Explorer &darr;</a>
+    </div>
+    <div class="header-wave">
+      <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#f0f4f8"/>
+      </svg>
+    </div>
+  </header>
+
+  <main>
+    <section id="presentation" class="card fade-in">
+      <div class="card-icon">&#128196;</div>
+      <h2>Présentation</h2>
+      <p>Ce mini site est utilisé pour découvrir le fonctionnement de <strong>Git</strong> et <strong>GitHub</strong>. Un outil indispensable pour tout développeur souhaitant gérer ses projets avec efficacité.</p>
+    </section>
+
+    <section class="card fade-in">
+      <div class="card-icon">&#128640;</div>
+      <h2>Pourquoi Git ?</h2>
+      <ul>
+        <li>&#10003; Suivi de l'historique des modifications</li>
+        <li>&#10003; Collaboration en équipe facilitée</li>
+        <li>&#10003; Retour en arrière possible à tout moment</li>
+        <li>&#10003; Branches pour développer en parallèle</li>
+      </ul>
+    </section>
+
+    <section class="card fade-in">
+      <div class="card-icon">&#128736;</div>
+      <h2>Commandes essentielles</h2>
+      <div class="commands">
+        <div class="command"><code>git init</code><span>Initialiser un dépôt</span></div>
+        <div class="command"><code>git add .</code><span>Préparer les fichiers</span></div>
+        <div class="command"><code>git commit -m "msg"</code><span>Enregistrer les changements</span></div>
+        <div class="command"><code>git push</code><span>Envoyer sur GitHub</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Versionné avec &#10084; et <strong>Git</strong> &mdash; <span id="year"></span></p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
 </body>
 </html>
-

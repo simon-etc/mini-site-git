@@ -1,25 +1,257 @@
+/* === Reset & Base === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary: #4f46e5;
+  --primary-dark: #3730a3;
+  --accent: #06b6d4;
+  --bg: #f0f4f8;
+  --white: #ffffff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --shadow: 0 8px 30px rgba(79, 70, 229, 0.12);
+  --radius: 16px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
- font-family: Arial, sans-serif;
- background-color: #f4f6f8;
- margin: 0;
- padding: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
 }
-h1 {
- background-color: #2c3e50;
- color: white;
- padding: 20px;
- margin: 0;
+
+/* === Header === */
+header {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--accent) 100%);
+  color: var(--white);
+  text-align: center;
+  padding: 80px 20px 0;
+  position: relative;
+  overflow: hidden;
 }
-section {
- background-color: white;
- width: 60%;
- margin: 40px auto;
- padding: 20px;
- border-radius: 8px;
- box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
-h2 {
- color: #2c3e50;
- border-boƩom: 2px solid #2c3e50;
- padding-boƩom: 5px;
+
+.header-content {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+  padding-bottom: 60px;
+}
+
+.logo {
+  width: 64px;
+  height: 64px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  backdrop-filter: blur(4px);
+  border: 2px solid rgba(255,255,255,0.3);
+}
+
+.logo svg {
+  width: 36px;
+  height: 36px;
+}
+
+header h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  opacity: 0.85;
+  margin-bottom: 32px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-hero {
+  display: inline-block;
+  background: var(--white);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 12px 32px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.btn-hero:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+}
+
+.header-wave {
+  line-height: 0;
+}
+
+.header-wave svg {
+  width: 100%;
+  display: block;
+}
+
+/* === Main === */
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* === Cards === */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 36px 40px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(79, 70, 229, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(79, 70, 229, 0.18);
+}
+
+.card-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.card h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e0e7ff;
+}
+
+.card p {
+  color: var(--text-light);
+  font-size: 1rem;
+}
+
+.card strong {
+  color: var(--primary);
+}
+
+/* === Liste === */
+.card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card ul li {
+  color: var(--text-light);
+  padding-left: 4px;
+  font-size: 1rem;
+}
+
+/* === Commandes === */
+.commands {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.command {
+  background: #f8faff;
+  border: 1px solid #e0e7ff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: background 0.2s;
+}
+
+.command:hover {
+  background: #eef2ff;
+}
+
+.command code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.command span {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+/* === Footer === */
+footer {
+  text-align: center;
+  padding: 24px;
+  background: var(--white);
+  border-top: 1px solid #e2e8f0;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+footer strong {
+  color: var(--primary);
+}
+
+/* === Animations === */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.fade-in:nth-child(2) { animation-delay: 0.15s; }
+.fade-in:nth-child(3) { animation-delay: 0.3s; }
+
+/* === Responsive === */
+@media (max-width: 600px) {
+  .card {
+    padding: 24px 20px;
+  }
+
+  header {
+    padding: 60px 20px 0;
+  }
 }
