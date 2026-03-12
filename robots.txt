@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://simon-etc.github.io/mini-site-git/sitemap.xml
