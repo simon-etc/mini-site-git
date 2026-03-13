@@ -156,8 +156,13 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 20px 60px; }
 .region-card p { font-size: 0.88rem; color: var(--text); line-height: 1.5; margin-bottom: 12px; }
 .region-champs { display: flex; flex-wrap: wrap; gap: 6px; }
 .region-champ-tag {
+  display: inline-flex; align-items: center; gap: 5px;
   background: rgba(200,155,60,0.1); border: 1px solid var(--gold-dark);
-  color: var(--gold); font-size: 0.75rem; padding: 2px 8px; border-radius: 12px;
+  color: var(--gold); font-size: 0.75rem; padding: 3px 8px 3px 4px; border-radius: 12px;
+}
+.region-champ-tag img {
+  width: 20px; height: 20px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
 }
 
 /* ── Onglet CHAMPIONS ───────────────────────────────────────── */
@@ -200,7 +205,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 20px 60px; }
   box-shadow: 0 8px 24px rgba(0,0,0,0.4);
 }
 .champ-img-wrap { position: relative; }
-.champ-img-wrap img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.champ-img-wrap img { width: 100%; aspect-ratio: 2/3; object-fit: cover; object-position: top; display: block; }
 .champ-role-badge {
   position: absolute; bottom: 4px; left: 4px;
   font-size: 0.65rem; font-weight: 700; color: #fff;

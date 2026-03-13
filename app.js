@@ -10,7 +10,8 @@ const DDragon = {
   champion:  (v, id) => `https://ddragon.leagueoflegends.com/cdn/${v}/data/fr_FR/champion/${id}.json`,
   runes:     v => `https://ddragon.leagueoflegends.com/cdn/${v}/data/fr_FR/runesReforged.json`,
   imgChamp:  (v, img) => `https://ddragon.leagueoflegends.com/cdn/${v}/img/champion/${img}`,
-  splash:    name => `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${name}_0.jpg`,
+  splash:    id => `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${id}_0.jpg`,
+  loading:   id => `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${id}_0.jpg`,
   runeIcon:  p => `https://ddragon.leagueoflegends.com/cdn/img/${p}`,
 };
 
@@ -308,7 +309,11 @@ function applyLoreFilter() {
       <h3>${r.name}</h3>
       <p>${r.desc}</p>
       <div class="region-champs">
-        ${r.champions.map(c => `<span class="region-champ-tag">${c}</span>`).join('')}
+        ${r.champions.map(c => {
+          const cd = Object.values(state.champions).find(ch => ch.name === c);
+          const imgHtml = cd ? `<img src="${DDragon.imgChamp(state.version, cd.image.full)}" alt="${c}" loading="lazy">` : '';
+          return `<span class="region-champ-tag">${imgHtml}${c}</span>`;
+        }).join('')}
       </div>
     `;
     card.addEventListener('click', () => {
@@ -350,7 +355,10 @@ function renderChampionGrid() {
     const card = el('div', 'champ-card');
     card.innerHTML = `
       <div class="champ-img-wrap">
-        <img loading="lazy" src="${DDragon.imgChamp(state.version, champ.image.full)}" alt="${champ.name}">
+        <img loading="lazy"
+             src="${DDragon.loading(champ.id)}"
+             onerror="this.src='${DDragon.imgChamp(state.version, champ.image.full)}'"
+             alt="${champ.name}">
         <span class="champ-role-badge" style="background:${tagColor(primaryTag)}">${tagLabel(primaryTag)}</span>
         ${loreData ? `<span class="champ-region-dot" style="background:${(window.REGION_COLORS || {})[loreData.region] || '#888'}" title="${loreData.region}"></span>` : ''}
       </div>
@@ -372,8 +380,16 @@ async function openChampModal(id) {
   body.innerHTML = '<div class="modal-loader">Chargement…</div>';
 
   try {
-    const data   = await fetchJSON(DDragon.champion(state.version, id));
-    const champ  = data.data[id];
+    let champ;
+    try {
+      const data = await fetchJSON(DDragon.champion(state.version, id));
+      champ = data.data[id];
+    } catch (_) {
+      // Fallback : données déjà chargées (sans lore complet)
+      champ = state.champions[id];
+      if (!champ) throw new Error('Champion introuvable');
+      champ = { ...champ, lore: champ.blurb || '' };
+    }
     const meraki = state.merakiChampions[champ.name] || null;
     const tag1   = getPrimaryTag(champ.tags);
     const recs   = RUNE_RECS[tag1] || RUNE_RECS['Fighter'];
@@ -519,7 +535,12 @@ function updateRuneSearch() {
   results.innerHTML = '';
   if (!s) { results.classList.remove('open'); return; }
 
-  const matches = Object.values(state.champions).filter(c => c.name.toLowerCase().includes(s)).slice(0, 6);
+  const seen = new Set();
+  const matches = Object.values(state.champions).filter(c => {
+    if (seen.has(c.id)) return false;
+    seen.add(c.id);
+    return c.name.toLowerCase().includes(s);
+  }).slice(0, 6);
   if (!matches.length) { results.classList.remove('open'); return; }
 
   matches.forEach(c => {
@@ -532,8 +553,10 @@ function updateRuneSearch() {
 }
 
 function selectRuneChamp(champ) {
+  const results = $('rune-champ-results');
+  results.innerHTML = '';
+  results.classList.remove('open');
   $('rune-champ-input').value = champ.name;
-  $('rune-champ-results').classList.remove('open');
   const primaryTag = getPrimaryTag(champ.tags);
   const recs = RUNE_RECS[primaryTag] || RUNE_RECS['Fighter'];
   const panel = $('selected-rune-recs');
