@@ -1,23 +1,20 @@
 // ============================================================
-// League of Legends – Lore, Champions, Runes & Patch Notes
-// Sources : Riot Data Dragon (officiel) + Meraki Analytics
+// League of Legends Universe – app.js
+// Chargement local-first (data/game-data.json) + fallback API
+// Relations de champions via data/lore.js
 // ============================================================
 
 const DDragon = {
-  versions: 'https://ddragon.leagueoflegends.com/api/versions.json',
+  versions:  'https://ddragon.leagueoflegends.com/api/versions.json',
   champions: v => `https://ddragon.leagueoflegends.com/cdn/${v}/data/fr_FR/champion.json`,
   champion:  (v, id) => `https://ddragon.leagueoflegends.com/cdn/${v}/data/fr_FR/champion/${id}.json`,
   runes:     v => `https://ddragon.leagueoflegends.com/cdn/${v}/data/fr_FR/runesReforged.json`,
   imgChamp:  (v, img) => `https://ddragon.leagueoflegends.com/cdn/${v}/img/champion/${img}`,
   splash:    name => `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${name}_0.jpg`,
-  runeIcon:  path => `https://ddragon.leagueoflegends.com/cdn/img/${path}`,
+  runeIcon:  p => `https://ddragon.leagueoflegends.com/cdn/img/${p}`,
 };
 
-const Meraki = {
-  champions: 'https://cdn.merakianalytics.com/riot/lol/resources/latest/en-US/champions.json',
-};
-
-// ── Recommandations de runes par tag ──────────────────────────────────────────
+// ── Recommandations de runes par tag ─────────────────────────────────────────
 const RUNE_RECS = {
   Assassin: [
     {
@@ -26,7 +23,7 @@ const RUNE_RECS = {
       primary: 'Domination', secondary: 'Précision',
       runes: ['Électrocution', 'Coup Sombre', 'Empreinte', 'Chasseur Vorace', 'Triomphe', 'Légende : Agilité'],
       stats: ['PA', 'PA', 'PV'],
-      tip: 'Dégâts explo­sifs sur 3 touches. Idéal pour les assassins burst comme Zed, Talon, Katarina.',
+      tip: 'Dégâts explosifs sur 3 touches. Idéal pour les assassins burst comme Zed, Talon, Katarina.',
     },
     {
       situation: 'Late Game / Snowball',
@@ -44,7 +41,7 @@ const RUNE_RECS = {
       primary: 'Précision', secondary: 'Résolution',
       runes: ['Conquérant', 'Triomphe', 'Légende : Ténacité', 'Dernier Combat', 'Marque des Anciens', 'Os Solide'],
       stats: ['PA', 'PA', 'PV'],
-      tip: 'Optimal pour les combats prolongés. Gagnez en puissance au fil du combat. Idéal pour Darius, Fiora, Renekton.',
+      tip: 'Optimal pour les combats prolongés. Idéal pour Darius, Fiora, Renekton.',
     },
     {
       situation: 'Tank Bruiser',
@@ -52,7 +49,7 @@ const RUNE_RECS = {
       primary: 'Résolution', secondary: 'Précision',
       runes: ['Emprise des Morts', 'Démolition', 'Conditionnement', 'Croissance Excessive', 'Triomphe', 'Légende : Ténacité'],
       stats: ['PV', 'Armure', 'Rés. Mag.'],
-      tip: 'Jouer tanky tout en restant dangereux. Très fort pour les bruisers de top comme Malphite, Nasus.',
+      tip: 'Jouer tanky tout en restant dangereux. Très fort pour Malphite, Nasus.',
     },
   ],
   Tank: [
@@ -96,7 +93,7 @@ const RUNE_RECS = {
       primary: 'Sorcellerie', secondary: 'Domination',
       runes: ['Phase de Ruée', 'Mana Flow Band', 'Absolue Concentration', 'Brûlure', 'Coup Sombre', 'Chasseur Vorace'],
       stats: ['PA', 'PA', 'PV'],
-      tip: 'Kiter l\'ennemi facilement et rester hors de portée. Pour Cassiopeia, Ryze.',
+      tip: 'Kiter l\'ennemi facilement. Pour Cassiopeia, Ryze.',
     },
   ],
   Marksman: [
@@ -145,40 +142,45 @@ const RUNE_RECS = {
   ],
 };
 
-// Régions de l'univers LoL – contenu statique enrichi
+// Régions statiques enrichies
 const REGIONS = [
-  { name: 'Demacia', icon: '⚔️', color: '#4a90d9', desc: 'Royaume de l\'honneur et de la vertu, où la magie est pourchassée. Berceau de champions comme Garen, Lux et Jarvan IV.', champions: ['Garen', 'Lux', 'Jarvan IV', 'Fiora', 'Poppy'] },
-  { name: 'Noxus',   icon: '🩸', color: '#c0392b', desc: 'Empire brutal fondé sur la force. La puissance seule confère le pouvoir. Champions : Darius, Draven, Katarina, Swain.', champions: ['Darius', 'Draven', 'Katarina', 'Swain', 'Cassiopeia'] },
-  { name: 'Freljord', icon: '❄️', color: '#5dade2', desc: 'Terres gelées du nord, habitées par des clans guerriers et des dieux anciens. Ashe, Lissandra et Tryndamere y règnent.', champions: ['Ashe', 'Lissandra', 'Tryndamere', 'Sejuani', 'Volibear'] },
-  { name: 'Ionie',   icon: '🌸', color: '#e056fd', desc: 'Terre de magie et de spiritualité, déchirée par l\'invasion Noxienne. Foyer d\'Ahri, Zed, Yasuo et Karma.', champions: ['Ahri', 'Zed', 'Yasuo', 'Karma', 'Irelia'] },
-  { name: 'Piltover', icon: '⚙️', color: '#f1c40f', desc: 'Cité des merveilles technologiques, appelée la Cité du Progrès. Jinx, Vi et Jayce y sont nés.', champions: ['Jinx', 'Vi', 'Jayce', 'Caitlyn', 'Ekko'] },
-  { name: 'Zaun',    icon: '☣️', color: '#2ecc71', desc: 'Ville des bas-fonds sous Piltover, noyée dans les fumées chimiques. Viktor, Warwick et Singed y survivent.', champions: ['Viktor', 'Warwick', 'Singed', 'Urgot', 'Zac'] },
-  { name: 'Shurima', icon: '🏜️', color: '#e67e22', desc: 'Empire du désert autrefois glorieux, désormais en ruines. Azir cherche à le ressusciter avec Nasus et Renekton.', champions: ['Azir', 'Nasus', 'Renekton', 'Taliyah', 'Sivir'] },
-  { name: "Îles de l'Ombre", icon: '💀', color: '#8e44ad', desc: 'Terres maudites envahies par la Brume Noire. Thresh, Kalista et Hecarim errent pour l\'éternité.', champions: ['Thresh', 'Kalista', 'Hecarim', 'Yorick', 'Karthus'] },
+  { name: 'Demacia',          icon: '⚔️',  color: '#4a90d9', desc: 'Royaume de l\'honneur et de la vertu, où la magie est pourchassée. Berceau de champions comme Garen, Lux et Jarvan IV.',      champions: ['Garen', 'Lux', 'Jarvan IV', 'Fiora', 'Poppy'] },
+  { name: 'Noxus',            icon: '🩸',  color: '#c0392b', desc: 'Empire brutal fondé sur la force. La puissance seule confère le pouvoir. Champions : Darius, Draven, Katarina, Swain.',       champions: ['Darius', 'Draven', 'Katarina', 'Swain', 'Cassiopeia'] },
+  { name: 'Freljord',         icon: '❄️',  color: '#5dade2', desc: 'Terres gelées du nord, habitées par des clans guerriers et des dieux anciens. Ashe, Lissandra et Tryndamere y règnent.',     champions: ['Ashe', 'Lissandra', 'Tryndamere', 'Sejuani', 'Volibear'] },
+  { name: 'Ionie',            icon: '🌸',  color: '#e056fd', desc: 'Terre de magie et de spiritualité, déchirée par l\'invasion Noxienne. Foyer d\'Ahri, Zed, Yasuo et Karma.',                   champions: ['Ahri', 'Zed', 'Yasuo', 'Karma', 'Irelia'] },
+  { name: 'Piltover',         icon: '⚙️',  color: '#f1c40f', desc: 'Cité des merveilles technologiques, appelée la Cité du Progrès. Jinx, Vi et Jayce y sont nés.',                               champions: ['Jinx', 'Vi', 'Jayce', 'Caitlyn', 'Ekko'] },
+  { name: 'Zaun',             icon: '☣️',  color: '#2ecc71', desc: 'Ville des bas-fonds sous Piltover, noyée dans les fumées chimiques. Viktor, Warwick et Singed y survivent.',                   champions: ['Viktor', 'Warwick', 'Singed', 'Urgot', 'Zac'] },
+  { name: 'Shurima',          icon: '🏜️', color: '#e67e22', desc: 'Empire du désert autrefois glorieux, désormais en ruines. Azir cherche à le ressusciter avec Nasus et Renekton.',              champions: ['Azir', 'Nasus', 'Renekton', 'Taliyah', 'Sivir'] },
+  { name: "Îles de l'Ombre",  icon: '💀',  color: '#8e44ad', desc: 'Terres maudites envahies par la Brume Noire. Thresh, Kalista et Hecarim errent pour l\'éternité.',                             champions: ['Thresh', 'Kalista', 'Hecarim', 'Yorick', 'Karthus'] },
+  { name: 'Bilgewater',       icon: '⚓',  color: '#1abc9c', desc: 'Port de pirates et de marchands, sans loi ni pitié. Miss Fortune traque Gangplank dans ses ruelles sombres.',                  champions: ['Miss Fortune', 'Gangplank', 'Pyke', 'Illaoi', 'Twisted Fate'] },
+  { name: 'Targon',           icon: '🌟',  color: '#e8c76b', desc: 'Montagne céleste où des dieux s\'incarnent dans des mortels. Leona et Diana se livrent une guerre divine.',                    champions: ['Leona', 'Diana', 'Pantheon', 'Taric', 'Soraka'] },
 ];
 
 // ── État de l'application ─────────────────────────────────────────────────────
 const state = {
-  version: null,
-  champions: {},
-  runes: [],
-  merakiChampions: {},
+  version:           null,
+  champions:         {},
+  runes:             [],
+  merakiChampions:   {},
   filteredChampions: [],
-  search: '',
-  roleFilter: 'Tous',
-  activeTab: 'lore',
-  selectedChampion: null,
-  runeChampion: null,
-  runeChampSearch: '',
+  search:            '',
+  roleFilter:        'Tous',
+  activeTab:         'lore',
+  loreSearch:        '',
 };
 
 // ── Utilitaires ───────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
-const tag = (el, cls, html) => { const e = document.createElement(el); if (cls) e.className = cls; if (html) e.innerHTML = html; return e; };
+const el = (tag, cls, html) => {
+  const e = document.createElement(tag);
+  if (cls)  e.className = cls;
+  if (html) e.innerHTML = html;
+  return e;
+};
 
 async function fetchJSON(url) {
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status} – ${url}`);
   return res.json();
 }
 
@@ -187,37 +189,59 @@ function getPrimaryTag(tags = []) {
   return tags.find(t => priority.includes(t)) || tags[0] || 'Fighter';
 }
 
-function tagLabel(tag) {
-  const map = { Fighter: 'Guerrier', Mage: 'Mage', Assassin: 'Assassin', Support: 'Support', Tank: 'Tank', Marksman: 'Tireur' };
-  return map[tag] || tag;
+function tagLabel(t) {
+  return { Fighter: 'Guerrier', Mage: 'Mage', Assassin: 'Assassin', Support: 'Support', Tank: 'Tank', Marksman: 'Tireur' }[t] || t;
 }
 
-function tagColor(tag) {
-  const map = { Fighter: '#e74c3c', Mage: '#9b59b6', Assassin: '#c0392b', Support: '#27ae60', Tank: '#2980b9', Marksman: '#e67e22' };
-  return map[tag] || '#888';
+function tagColor(t) {
+  return { Fighter: '#e74c3c', Mage: '#9b59b6', Assassin: '#c0392b', Support: '#27ae60', Tank: '#2980b9', Marksman: '#e67e22' }[t] || '#888';
 }
 
-// ── Chargement des données ────────────────────────────────────────────────────
+function stripHtml(html) {
+  const d = document.createElement('div');
+  d.innerHTML = html;
+  return d.textContent || '';
+}
+
+// ── Chargement des données (local-first) ──────────────────────────────────────
 async function loadData() {
   showLoader(true);
   try {
-    const versions = await fetchJSON(DDragon.versions);
-    state.version = versions[0];
+    let loaded = false;
+
+    // Essai 1 : fichier pré-généré au build
+    try {
+      const local = await fetchJSON('data/game-data.json');
+      if (local && local.version && local.champions) {
+        state.version   = local.version;
+        state.champions = local.champions;
+        state.runes     = local.runes;
+        loaded = true;
+        console.log(`[app] Données locales chargées (patch ${state.version})`);
+      }
+    } catch (_) {
+      console.log('[app] Pas de données locales, chargement via API…');
+    }
+
+    // Essai 2 : Data Dragon en temps réel
+    if (!loaded) {
+      const versions = await fetchJSON(DDragon.versions);
+      state.version   = versions[0];
+      const [champData, runeData] = await Promise.all([
+        fetchJSON(DDragon.champions(state.version)),
+        fetchJSON(DDragon.runes(state.version)),
+      ]);
+      state.champions = champData.data;
+      state.runes     = runeData;
+    }
+
     $('patch-version').textContent = `Patch ${state.version}`;
-
-    const [champData, runeData] = await Promise.all([
-      fetchJSON(DDragon.champions(state.version)),
-      fetchJSON(DDragon.runes(state.version)),
-    ]);
-
-    state.champions = champData.data;
-    state.runes = runeData;
     state.filteredChampions = Object.values(state.champions);
 
-    // Meraki en parallèle (optionnel – on ignore les erreurs)
-    fetchJSON(Meraki.champions).then(d => {
-      state.merakiChampions = d;
-    }).catch(() => {});
+    // Meraki optionnel (stats étendues)
+    fetchJSON('https://cdn.merakianalytics.com/riot/lol/resources/latest/en-US/champions.json')
+      .then(d => { state.merakiChampions = d; })
+      .catch(() => {});
 
     renderCurrentTab();
   } catch (e) {
@@ -247,25 +271,54 @@ function renderCurrentTab() {
 // ── Onglet LORE ───────────────────────────────────────────────────────────────
 function renderLore() {
   const container = $('lore-regions');
-  if (container.dataset.rendered) return;
+  applyLoreFilter();
+  if (!container.dataset.listenersAdded) {
+    const searchInput = $('lore-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', e => {
+        state.loreSearch = e.target.value;
+        applyLoreFilter();
+      });
+    }
+    container.dataset.listenersAdded = '1';
+  }
+}
+
+function applyLoreFilter() {
+  const container = $('lore-regions');
+  const q = state.loreSearch.toLowerCase().trim();
+  const filtered = q
+    ? REGIONS.filter(r =>
+        r.name.toLowerCase().includes(q) ||
+        r.desc.toLowerCase().includes(q) ||
+        r.champions.some(c => c.toLowerCase().includes(q))
+      )
+    : REGIONS;
+
   container.innerHTML = '';
-  REGIONS.forEach(r => {
-    const card = tag('div', 'region-card');
+  if (!filtered.length) {
+    container.innerHTML = '<p class="no-result" style="grid-column:1/-1">Aucune région trouvée.</p>';
+    return;
+  }
+  filtered.forEach(r => {
+    const card = el('div', 'region-card');
     card.style.setProperty('--region-color', r.color);
     card.innerHTML = `
       <div class="region-icon">${r.icon}</div>
       <h3>${r.name}</h3>
       <p>${r.desc}</p>
-      <div class="region-champs">${r.champions.map(c => `<span class="region-champ-tag">${c}</span>`).join('')}</div>
+      <div class="region-champs">
+        ${r.champions.map(c => `<span class="region-champ-tag">${c}</span>`).join('')}
+      </div>
     `;
     card.addEventListener('click', () => {
       switchTab('champions');
       state.search = r.champions[0];
+      $('champ-search').value = r.champions[0];
       applyFilter();
     });
     container.appendChild(card);
   });
-  container.dataset.rendered = '1';
 }
 
 // ── Onglet CHAMPIONS ─────────────────────────────────────────────────────────
@@ -293,11 +346,13 @@ function renderChampionGrid() {
   }
   state.filteredChampions.forEach(champ => {
     const primaryTag = getPrimaryTag(champ.tags);
-    const card = tag('div', 'champ-card');
+    const loreData   = (window.CHAMPION_RELATIONS || {})[champ.name];
+    const card = el('div', 'champ-card');
     card.innerHTML = `
       <div class="champ-img-wrap">
         <img loading="lazy" src="${DDragon.imgChamp(state.version, champ.image.full)}" alt="${champ.name}">
         <span class="champ-role-badge" style="background:${tagColor(primaryTag)}">${tagLabel(primaryTag)}</span>
+        ${loreData ? `<span class="champ-region-dot" style="background:${(window.REGION_COLORS || {})[loreData.region] || '#888'}" title="${loreData.region}"></span>` : ''}
       </div>
       <div class="champ-info">
         <strong>${champ.name}</strong>
@@ -309,11 +364,12 @@ function renderChampionGrid() {
   });
 }
 
+// ── Modal Champion ────────────────────────────────────────────────────────────
 async function openChampModal(id) {
   const modal = $('champ-modal');
   const body  = $('modal-body');
   modal.classList.add('open');
-  body.innerHTML = '<div class="modal-loader">Chargement...</div>';
+  body.innerHTML = '<div class="modal-loader">Chargement…</div>';
 
   try {
     const data   = await fetchJSON(DDragon.champion(state.version, id));
@@ -321,6 +377,7 @@ async function openChampModal(id) {
     const meraki = state.merakiChampions[champ.name] || null;
     const tag1   = getPrimaryTag(champ.tags);
     const recs   = RUNE_RECS[tag1] || RUNE_RECS['Fighter'];
+    const lore   = (window.CHAMPION_RELATIONS || {})[champ.name] || null;
 
     body.innerHTML = `
       <div class="modal-splash-wrap">
@@ -329,18 +386,23 @@ async function openChampModal(id) {
         <div class="modal-title-block">
           <h2>${champ.name}</h2>
           <span class="champ-title-sub">${champ.title}</span>
-          <div class="modal-tags">${champ.tags.map(t => `<span style="background:${tagColor(t)}">${tagLabel(t)}</span>`).join('')}</div>
+          <div class="modal-tags">
+            ${champ.tags.map(t => `<span style="background:${tagColor(t)}">${tagLabel(t)}</span>`).join('')}
+            ${lore ? `<span class="modal-region-tag" style="background:${(window.REGION_COLORS || {})[lore.region] || '#555'}">${lore.region}</span>` : ''}
+          </div>
         </div>
       </div>
       <div class="modal-content-grid">
         <section class="modal-section">
           <h3>📖 Lore</h3>
           <p class="lore-text">${champ.lore}</p>
+          ${lore && lore.note ? `<p class="lore-note">${lore.note}</p>` : ''}
         </section>
         <section class="modal-section">
           <h3>📊 Statistiques (Patch ${state.version})</h3>
           ${renderStats(champ.stats, meraki)}
         </section>
+        ${lore ? renderRelations(lore) : ''}
         <section class="modal-section full-width">
           <h3>💎 Runes recommandées</h3>
           <div class="rune-recs-grid">
@@ -364,15 +426,47 @@ async function openChampModal(id) {
   }
 }
 
+function renderRelations(lore) {
+  const rows = [];
+  if (lore.allies  && lore.allies.length)  rows.push(['🤝 Alliés',  lore.allies,  'rel-ally']);
+  if (lore.rivals  && lore.rivals.length)  rows.push(['⚔️ Rivaux',  lore.rivals,  'rel-rival']);
+  if (lore.enemies && lore.enemies.length) rows.push(['💀 Ennemis', lore.enemies, 'rel-enemy']);
+  if (!rows.length) return '';
+  return `
+    <section class="modal-section">
+      <h3>🔗 Relations</h3>
+      <div class="relations-list">
+        ${rows.map(([label, names, cls]) => `
+          <div class="rel-row">
+            <span class="rel-label">${label}</span>
+            <div class="rel-tags">
+              ${names.map(n => `
+                <button class="rel-tag ${cls}" onclick="openChampByName('${n.replace(/'/g, "\\'")}')">${n}</button>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </section>
+  `;
+}
+
+function openChampByName(name) {
+  const champ = Object.values(state.champions).find(c => c.name === name);
+  if (champ) openChampModal(champ.id);
+}
+// expose globally for inline onclick
+window.openChampByName = openChampByName;
+
 function renderStats(stats, meraki) {
   const rows = [
-    ['❤️ PV de base', stats.hp, meraki?.stats?.health?.flat],
+    ['❤️ PV de base',        stats.hp,           meraki?.stats?.health?.flat],
     ['⚔️ Dégâts d\'attaque', stats.attackdamage, meraki?.stats?.attackDamage?.flat],
-    ['🛡️ Armure', stats.armor, meraki?.stats?.armor?.flat],
-    ['✨ Résistance Mag.', stats.spellblock, meraki?.stats?.magicResistance?.flat],
-    ['💨 Vitesse de dépl.', stats.movespeed, meraki?.stats?.movespeed],
-    ['🔮 Mana', stats.mp, meraki?.stats?.mana?.flat],
-    ['🎯 Portée d\'attaque', stats.attackrange, meraki?.stats?.attackRange],
+    ['🛡️ Armure',            stats.armor,        meraki?.stats?.armor?.flat],
+    ['✨ Rés. Magique',       stats.spellblock,   meraki?.stats?.magicResistance?.flat],
+    ['💨 Vitesse de dépl.',   stats.movespeed,    meraki?.stats?.movespeed],
+    ['🔮 Mana',               stats.mp,           meraki?.stats?.mana?.flat],
+    ['🎯 Portée d\'attaque',  stats.attackrange,  meraki?.stats?.attackRange],
   ];
   return `<div class="stats-grid">${rows.map(([label, val, mval]) => `
     <div class="stat-item">
@@ -389,16 +483,15 @@ function closeModal() {
 function renderRunes() {
   const panel = $('runes-panel');
   if (panel.dataset.rendered) return;
-  buildRuneChampSearch();
+  buildRuneTrees();
   panel.dataset.rendered = '1';
 }
 
-function buildRuneChampSearch() {
-  // Afficher la liste des keystones depuis Data Dragon
+function buildRuneTrees() {
   const keystoneSection = $('rune-trees');
   keystoneSection.innerHTML = '';
   state.runes.forEach(tree => {
-    const div = tag('div', 'rune-tree');
+    const div = el('div', 'rune-tree');
     div.innerHTML = `
       <div class="rune-tree-header">
         <img src="${DDragon.runeIcon(tree.icon)}" alt="${tree.name}" onerror="this.style.display='none'">
@@ -421,7 +514,7 @@ function buildRuneChampSearch() {
 }
 
 function updateRuneSearch() {
-  const s = $('rune-champ-input').value.toLowerCase();
+  const s       = $('rune-champ-input').value.toLowerCase();
   const results = $('rune-champ-results');
   results.innerHTML = '';
   if (!s) { results.classList.remove('open'); return; }
@@ -430,7 +523,7 @@ function updateRuneSearch() {
   if (!matches.length) { results.classList.remove('open'); return; }
 
   matches.forEach(c => {
-    const li = tag('li', 'rune-search-result');
+    const li = el('li', 'rune-search-result');
     li.innerHTML = `<img src="${DDragon.imgChamp(state.version, c.image.full)}" alt="${c.name}"><span>${c.name}</span>`;
     li.addEventListener('click', () => selectRuneChamp(c));
     results.appendChild(li);
@@ -473,7 +566,7 @@ function renderPatch() {
   $('patch-main').innerHTML = `
     <div class="patch-hero">
       <h2>Patch ${major}.${minor}</h2>
-      <p>Les données des champions (statistiques, sorts, lore) sont automatiquement synchronisées avec le dernier patch via l'API officielle Riot Data Dragon.</p>
+      <p>Les données des champions sont synchronisées automatiquement avec le dernier patch via l'API officielle Riot Data Dragon.</p>
       <a class="btn-patch" href="${patchUrl}" target="_blank" rel="noopener noreferrer">
         📋 Lire les notes de patch officielles →
       </a>
@@ -482,57 +575,49 @@ function renderPatch() {
       <div class="patch-info-card">
         <div class="patch-info-icon">🔄</div>
         <h4>Mise à jour automatique</h4>
-        <p>Ce site récupère en temps réel les dernières données depuis Riot Data Dragon. Chaque statistique affiché reflète le patch actuel.</p>
+        <p>Les données sont pré-chargées au build et mises à jour à chaque déploiement.</p>
       </div>
       <div class="patch-info-card">
         <div class="patch-info-icon">⚔️</div>
         <h4>Stats des champions</h4>
-        <p>Les PV, dégâts, armure et autres stats de chaque champion reflètent exactement les valeurs du patch <strong>${state.version}</strong>.</p>
+        <p>PV, dégâts, armure et stats reflètent exactement le patch <strong>${state.version}</strong>.</p>
       </div>
       <div class="patch-info-card">
         <div class="patch-info-icon">💎</div>
         <h4>Runes</h4>
-        <p>Toutes les runes disponibles proviennent du patch actuel. Les recommandations sont basées sur les méta-builds éprouvés.</p>
+        <p>Toutes les runes et keystones proviennent du patch actuel.</p>
       </div>
     </div>
     <div id="patch-champs-grid" class="patch-champs-grid"></div>
   `;
 
-  // Afficher tous les champions avec leurs stats actuelles
   const grid = $('patch-champs-grid');
   Object.values(state.champions).slice(0, 60).forEach(c => {
-    const card = tag('div', 'patch-champ-card');
+    const card = el('div', 'patch-champ-card');
     card.innerHTML = `
       <img src="${DDragon.imgChamp(state.version, c.image.full)}" alt="${c.name}" loading="lazy">
       <div class="patch-champ-name">${c.name}</div>
-      <div class="patch-champ-stats">
-        ❤️ ${c.stats.hp} · ⚔️ ${c.stats.attackdamage} · 🛡️ ${c.stats.armor}
-      </div>
+      <div class="patch-champ-stats">❤️ ${c.stats.hp} · ⚔️ ${c.stats.attackdamage} · 🛡️ ${c.stats.armor}</div>
     `;
     card.addEventListener('click', () => {
       switchTab('champions');
       state.search = c.name;
+      $('champ-search').value = c.name;
       applyFilter();
     });
     grid.appendChild(card);
   });
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-function stripHtml(html) {
-  const d = document.createElement('div');
-  d.innerHTML = html;
-  return d.textContent || '';
-}
-
+// ── UI helpers ────────────────────────────────────────────────────────────────
 function showLoader(on) {
   $('global-loader').style.display = on ? 'flex' : 'none';
 }
 
 function showError(msg) {
-  const el = $('global-error');
-  el.textContent = msg;
-  el.style.display = 'block';
+  const e = $('global-error');
+  e.textContent = msg;
+  e.style.display = 'block';
 }
 
 // ── Initialisation ────────────────────────────────────────────────────────────
@@ -542,7 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
     b.addEventListener('click', () => switchTab(b.dataset.tab));
   });
 
-  // Fermer modal
+  // Modal
   $('modal-close').addEventListener('click', closeModal);
   $('champ-modal').addEventListener('click', e => { if (e.target === $('champ-modal')) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });

@@ -381,6 +381,62 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 20px 60px; }
 .patch-champ-name { font-size: 0.82rem; font-weight: 700; color: var(--text-bright); padding: 6px 10px 2px; }
 .patch-champ-stats { font-size: 0.7rem; color: var(--text); padding: 0 10px 8px; }
 
+/* ── Recherche Lore ─────────────────────────────────────────── */
+.lore-search-wrap {
+  margin-top: 20px;
+}
+#lore-search {
+  width: 100%; max-width: 440px;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text-bright); padding: 10px 16px;
+  border-radius: var(--radius); font-size: 1rem; outline: none;
+  transition: border-color 0.2s;
+}
+#lore-search:focus { border-color: var(--gold); }
+#lore-search::placeholder { color: #4a5875; }
+
+/* ── Relations Champion ─────────────────────────────────────── */
+.relations-list { display: flex; flex-direction: column; gap: 10px; }
+.rel-row { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.rel-label {
+  font-size: 0.78rem; font-weight: 700; color: var(--text);
+  white-space: nowrap; padding-top: 3px; min-width: 70px;
+}
+.rel-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.rel-tag {
+  background: none; border: 1px solid var(--border);
+  color: var(--text-bright); font-size: 0.78rem; padding: 3px 10px;
+  border-radius: 12px; cursor: pointer; transition: all 0.15s;
+}
+.rel-tag:hover { color: var(--white); }
+.rel-tag.rel-ally  { border-color: #27ae60; color: #2ecc71; }
+.rel-tag.rel-ally:hover  { background: rgba(46,204,113,0.15); }
+.rel-tag.rel-rival { border-color: #e67e22; color: #f39c12; }
+.rel-tag.rel-rival:hover { background: rgba(243,156,18,0.15); }
+.rel-tag.rel-enemy { border-color: #c0392b; color: #e74c3c; }
+.rel-tag.rel-enemy:hover { background: rgba(231,76,60,0.15); }
+
+/* ── Region dot sur cartes champions ───────────────────────── */
+.champ-region-dot {
+  position: absolute; top: 4px; right: 4px;
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* ── Tag région dans modal ──────────────────────────────────── */
+.modal-region-tag {
+  font-size: 0.7rem; font-weight: 700; color: #fff;
+  padding: 2px 10px; border-radius: 12px; opacity: 0.9;
+}
+
+/* ── Lore note ──────────────────────────────────────────────── */
+.lore-note {
+  margin-top: 10px; padding: 10px 14px;
+  background: rgba(200,155,60,0.07); border-left: 2px solid var(--gold-dark);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 0.85rem; color: var(--gold); font-style: normal;
+}
+
 /* ── Footer ─────────────────────────────────────────────────── */
 footer {
   text-align: center; padding: 28px 20px;

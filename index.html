@@ -23,7 +23,7 @@
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://ddragon.leagueoflegends.com https://cdn.merakianalytics.com; img-src 'self' data: https://ddragon.leagueoflegends.com; style-src 'self'; script-src 'self'; font-src 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://ddragon.leagueoflegends.com https://cdn.merakianalytics.com; img-src 'self' data: https://ddragon.leagueoflegends.com; style-src 'self'; script-src 'self' 'unsafe-inline'; font-src 'self';">
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -70,6 +70,9 @@
       <div class="lore-hero">
         <h2>L'Univers de Runeterra</h2>
         <p>Un monde déchiré par la magie, la guerre et des forces ancestrales. Chaque région forge des légendes qui façonnent le destin de Runeterra.</p>
+        <div class="lore-search-wrap">
+          <input id="lore-search" type="search" placeholder="Rechercher une région ou un champion…" autocomplete="off" aria-label="Rechercher dans le lore">
+        </div>
       </div>
       <div id="lore-regions" class="regions-grid"></div>
     </section>
@@ -130,6 +133,7 @@
     <p class="footer-disclaimer">Ce site n'est pas affilié à Riot Games.</p>
   </footer>
 
+  <script src="data/lore.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

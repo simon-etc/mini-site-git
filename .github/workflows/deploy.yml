@@ -5,6 +5,9 @@ on:
     branches:
       - main
   workflow_dispatch:
+  schedule:
+    # Mise à jour automatique tous les mardis à 10h (UTC) – jours de patch LoL
+    - cron: '0 10 * * 2'
 
 permissions:
   contents: read
@@ -25,6 +28,14 @@ jobs:
     steps:
       - name: Récupération du code
         uses: actions/checkout@v4
+
+      - name: Installation de Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Pré-chargement des données Riot (Data Dragon)
+        run: node scripts/fetch-data.js
 
       - name: Configuration de GitHub Pages
         uses: actions/configure-pages@v5
