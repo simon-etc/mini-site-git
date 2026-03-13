@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - claude/improve-website-design-N7NPk
   workflow_dispatch:
   schedule:
     # Mise à jour automatique tous les mardis à 10h (UTC) – jours de patch LoL
